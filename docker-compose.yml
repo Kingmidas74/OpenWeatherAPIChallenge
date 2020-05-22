@@ -1,24 +1,25 @@
 version: "3"
 services:
 
-    webapi_service:
+    weather_service:
         build:
           context: .
           dockerfile: ./AppServices/WebAPIService/Dockerfile        
-        container_name: webapi_service
+        container_name: weather_service
         restart: unless-stopped
         expose:
           - 5002
         environment: 
           API_KEY: "439d4b804bc8187953eb36d2a8c26a02"
-          API_URL: "https://samples.openweathermap.org/data/2.5/weather"          
+          API_URL: "https://samples.openweathermap.org/data/2.5/weather" 
+          ASPNETCORE_ENVIRONMENT: "Development"          
           
      
     angular:
       build:
         context: .
         dockerfile: ./ClientApplications/Angular/Dockerfile        
-      container_name: angular
+      container_name: weather_client
       restart: unless-stopped
       ports:
         - 8888:80
@@ -30,9 +31,9 @@ services:
       build: 
         context: .
         dockerfile: ./AppServices/WebAPIService/nginx/Dockerfile
-      container_name: webapi_nginx
+      container_name: weather_nginx
       restart: unless-stopped
       ports:
         - 5002:8989
       depends_on: 
-        - webapi_service
+        - weather_service

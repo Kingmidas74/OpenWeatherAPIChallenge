@@ -4,18 +4,8 @@
 
 export const environment = {
   production: false,
-  identityService: {
-    URL: 'http://localhost:5000',
-    user: {
-      grantType: 'custom',
-      scope: 'phrygiawebapi offline_access',
-      clientId: 'personal_local',
-      secret: 'secret'
-    }
-  },
-  constants: {
-    JWTTokenStorageKey: 'JWTToken',
-    snackBarDuration:5000
+  API: {
+    URL: 'http://localhost:5002/api/0.1'
   }
 };
 

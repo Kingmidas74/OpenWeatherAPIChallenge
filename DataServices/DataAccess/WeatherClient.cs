@@ -26,7 +26,7 @@ namespace DataAccess
 
             var schema = generator.Generate(typeof(Temperatures));
 
-            using(var response = await client.GetAsync($"?lat={Lattitude}&lon={Longitude}&app2id={Environment.GetEnvironmentVariable (nameof (EnvironmentVariables.API_KEY))}",cancellationToken)) 
+            using(var response = await client.GetAsync($"?lat={Lattitude}&lon={Longitude}&appid={Environment.GetEnvironmentVariable (nameof (EnvironmentVariables.API_KEY))}",cancellationToken)) 
             {
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
