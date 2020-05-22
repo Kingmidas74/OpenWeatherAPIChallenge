@@ -10,7 +10,6 @@ namespace DataAccess
         {
             services.AddHttpClient<WeatherClient>(client =>
             {
-                //?appid={Environment.GetEnvironmentVariable (nameof (EnvironmentVariables.API_KEY))}
                 client.BaseAddress = new Uri(
                     $"{Environment.GetEnvironmentVariable (nameof (EnvironmentVariables.API_URL))}");
                 client.DefaultRequestHeaders.Accept.Add(

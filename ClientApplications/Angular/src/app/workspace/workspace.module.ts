@@ -13,7 +13,6 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { WorkspaceLayoutComponent } from './components/workspace-layout/workspace-layout.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { StatisticsComponent } from './components/statistics/statistics.component';
 
 
 
@@ -24,8 +23,7 @@ import { StatisticsComponent } from './components/statistics/statistics.componen
     NavbarComponent, 
     FooterComponent, 
     WorkspaceLayoutComponent, 
-    DashboardComponent, 
-    StatisticsComponent    
+    DashboardComponent        
   ],
   imports: [
     CommonModule,
