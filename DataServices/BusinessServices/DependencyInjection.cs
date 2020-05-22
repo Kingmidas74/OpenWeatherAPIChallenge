@@ -1,6 +1,5 @@
 using AutoMapper;
 using BusinessServices.PipelineBehaviors;
-using BusinessServices.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,8 +10,6 @@ namespace BusinessServices
     {
         public static IServiceCollection AddBusinessServices(this IServiceCollection services)
         {
-            services.AddTransient<ParentService>();
-            services.AddTransient<ChildService>();
             services.AddMediatR(typeof(DependencyInjection));
             services.AddAutoMapper (typeof (DependencyInjection));
             services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);    

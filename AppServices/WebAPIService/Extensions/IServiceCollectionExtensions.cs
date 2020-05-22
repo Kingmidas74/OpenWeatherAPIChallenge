@@ -4,24 +4,12 @@ using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using DataAccess;
 
 namespace WebAPIService
 {
     public static class IServiceCollectionExtensions {
         
-        public static IServiceCollection AddAuth (this IServiceCollection services, string connectionString) {            
-            var identityServerURI = string.Format (connectionString, 
-                            System.Environment.GetEnvironmentVariable (nameof (WebAPIService.Models.EnvironmentVariables.PIS_HOST)), 
-                            System.Environment.GetEnvironmentVariable (nameof (WebAPIService.Models.EnvironmentVariables.PIS_PORT)));
-            services.AddAuthentication ("Bearer")
-                .AddJwtBearer ("Bearer", options => {
-                    options.Authority = identityServerURI;
-                    options.RequireHttpsMetadata = false;
-
-                    options.Audience = "phrygiawebapi offline_access";
-                });
-            return services;
-        }
         public static IServiceCollection AddSwagger (this IServiceCollection services) {
 
             services.AddApiVersioning(options => {
@@ -55,26 +43,7 @@ namespace WebAPIService
                         }                        
                     });  
                 }  
-
-                c.AddSecurityDefinition ("Bearer", new OpenApiSecurityScheme {
-                    In = ParameterLocation.Header,
-                        Description = "Please insert JWT with Bearer into field",
-                        Name = "Authorization",
-                        Type = SecuritySchemeType.ApiKey
-                });
-
-                c.AddSecurityRequirement (new OpenApiSecurityRequirement {
-                    {
-                        new OpenApiSecurityScheme {
-                            Reference = new OpenApiReference {
-                                Type = ReferenceType.SecurityScheme,
-                                    Id = "Bearer"
-                            }
-                        },
-                        new string[] { }
-                    }
-                });
-  
+                
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine (AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments (xmlPath);

@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPIService.Extensions;
-using MessageBusServices;
-using Domain.Extensions;
 
 namespace WebAPIService.Versions.ANY.Controllers {
 
@@ -10,9 +8,7 @@ namespace WebAPIService.Versions.ANY.Controllers {
     [ApiController]
     [ApiVersionNeutral]
     public class StatusController : ControllerBase {
-        private MessageProducerService MessageService;
-        public StatusController (MessageProducerService messageService) {
-            this.MessageService = messageService;
+        public StatusController () {
         }
 
         /// <summary>
@@ -25,18 +21,6 @@ namespace WebAPIService.Versions.ANY.Controllers {
             return Ok (new {
                 result=1
             });
-        }
-
-        /// <summary>
-        /// Закрытый статус
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet (nameof (GetPrivateStatus))]
-        [Authorize]
-        public IActionResult GetPrivateStatus () {
-            var userId = User.ExtractIdentifier ();
-            //MessageService.Enqueue ($"{nameof(GetFreeStatus)} by user {userId}", MessageBusEvents.UserNotificationEvent.GetDescription () + ".test");
-            return Ok (userId);
         }
     }
 }

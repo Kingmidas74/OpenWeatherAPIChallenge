@@ -1,7 +1,5 @@
 using System;
 using BusinessServices;
-using DataAccess;
-using DataAccess.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -10,11 +8,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Serilog;
 using WebAPIService.Middleware;
-using WebAPIService.Models;
-using MessageBusServices;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Prometheus;
 using Masking.Serilog;
+using DataAccess;
 
 namespace WebAPIService
 {   
@@ -39,17 +36,9 @@ namespace WebAPIService
 
         public void ConfigureServices (IServiceCollection services) {
             JsonConvert.DefaultSettings = ConfigureJSON;
-            services.Configure<ApplicationOptions> (Configuration.GetSection (nameof (ApplicationOptions)));
-            
-            var applicationOptions = new WebAPIService.Models.ApplicationOptions ();
-            Configuration.GetSection (nameof (WebAPIService.Models.ApplicationOptions)).Bind (applicationOptions);            
-            
-            services.AddSwagger ();
-            services.AddAuth (applicationOptions.IdentityServiceURI);            
-            services.AddSQL (Configuration.GetConnectionString ("DefaultConnection"));
-            services.AddQueueService (applicationOptions.RabbitMQSeriveURI);
+            services.AddSwagger ();       
             services.AddBusinessServices();
-
+            services.AddWeatherClient();
             services.AddSingleton<MetricReporter>();
 
             services.AddControllers ()
@@ -68,10 +57,7 @@ namespace WebAPIService
         }
 
         public void Configure (IApplicationBuilder app, IApiVersionDescriptionProvider provider) {
-            Log.Logger = new LoggerConfiguration ().ReadFrom.Configuration (Configuration)
-                                .Destructure.ByMaskingProperties("Password", "Token")
-                                .WriteTo.Seq(System.Environment.GetEnvironmentVariable(nameof(Models.EnvironmentVariables.SeqURL)))
-                                .CreateLogger();
+            Log.Logger = new LoggerConfiguration ().ReadFrom.Configuration (Configuration).CreateLogger();
             
             app.UseMiddleware<RequestResponseLoggingMiddleware> ();
             app.UseMiddleware<ResponseMetricMiddleware>();
@@ -96,20 +82,9 @@ namespace WebAPIService
 
             app.UseRouting ();
 
-            app.UseAuthentication ();
-            app.UseAuthorization ();
-
             app.UseEndpoints (endpoints => {
                 endpoints.MapControllers ();
             });
-            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory> ().CreateScope ()) {
-                var context = serviceScope.ServiceProvider.GetRequiredService<APIContext> ();                    
-                    
-                if(!context.AllMigrationsApplied())
-                {
-                    context.Database.Migrate();
-                }                
-            }
         }
     }
 }
